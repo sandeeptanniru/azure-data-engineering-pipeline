@@ -7,7 +7,7 @@ gold_schema = 'gold'
 
 
 #### landing folder path
-landing_path = '/Volumes/retail/raw/source_files'
+landing_path = '/Volumes/retail/landing/source_files'
 
 #### bronze delta tables 
 customer_table = 'olist_customers_dataset'

@@ -16,17 +16,19 @@ from pyspark.sql.types import (
 %run ../Setup/common_config.py
 
 customer_file = f"{landing_path}/olist_customers_dataset.csv"
-geolocation_file = f"{landing_path}/olist_geolocation_dataset"
-order_items_file = f"{landing_path}/olist_order_items_dataset"
-order_reviews_file = f"{landing_path}/olist_order_reviews_dataset"
-orders_file = f"{landing_path}/olist_orders_dataset"
-products_file = f"{landing_path}/olist_products_dataset"
-sellers_file = f"{landing_path}/olist_sellers_dataset"
+geolocation_file = f"{landing_path}/olist_geolocation_dataset.csv"
+order_items_file = f"{landing_path}/olist_order_items_dataset.csv"
+order_reviews_file = f"{landing_path}/olist_order_reviews_dataset.csv"
+orders_file = f"{landing_path}/olist_orders_dataset.csv"
+products_file = f"{landing_path}/olist_products_dataset.csv"
+sellers_file = f"{landing_path}/olist_sellers_dataset.csv"
 
 def add_timestamp(df):
     return(
         df.withColumn("Insert_Timestamp", f.current_timestamp())
     )
+
+
 
 print (f"Started Processing file - {customer_file} started at {datetime.now()}")
 customer_schema = StructType([StructField("customer_id", StringType(), False),
@@ -39,14 +41,14 @@ customer_schema = StructType([StructField("customer_id", StringType(), False),
 customer_df1 = spark.read.format("csv").option("header","true") \
                                              .schema(customer_schema) \
                                              .option("mode","FAILFAST") \
-                                             .load(customer_file))
+                                             .load(customer_file)
 
 customer_df = add_timestamp(customer_df1)
 ##spark.sql("Truncate TABLE retail_catalog.raw.olist_customers_dataset")
 
 print(f"Data Load into bronze table - {customer_table} started at {datetime.now()}")
 
-customers_df.write.format("delta") \
+customer_df.write.format("delta") \
                    .mode("overwrite") \
                    .saveAsTable(customer_table)
 
@@ -77,7 +79,7 @@ geolocation_df = add_timestamp(geolocation_df1)
 
 print(f"Data Load into bronze table - {geolocation_table} started at {datetime.now()}")
 
-geolocation_df.write.format("delta").option("overwrite").saveAsTable(geolocation_table)
+geolocation_df.write.format("delta").mode("overwrite").saveAsTable(geolocation_table)
 
 print(f"Data Load into bronze table - {geolocation_table} completed at {datetime.now()}")
 
@@ -96,7 +98,7 @@ order_items_schema = StructType([StructField("order_id", StringType(), False),
                                  StructField("seller_id", StringType(), True),
                                  StructField("shipping_limit_date", TimestampType(), True),
                                  StructField("price", FloatType(), True),
-                                 StructType("freight_value", FloatType(), True)
+                                 StructField("freight_value", FloatType(), True)
                                  ])
 
 order_items_df1 = spark.read.format("csv").option("header","true") \
@@ -108,7 +110,7 @@ order_items_df = add_timestamp(order_items_df1)
 
 print(f"Data Load into bronze table - {order_items_table} started at {datetime.now()}")
 
-order_items_df.write.format("delta").option("mode", "overwrite").saveAsTable("order_items_table")
+order_items_df.write.format("delta").mode("overwrite").saveAsTable(order_items_table)
 
 print(f"Data Load into bronze table - {order_items_table} completed at {datetime.now()}")
 
@@ -127,19 +129,20 @@ order_reviews_schema = StructType([StructField("review_id", StringType(), True),
                                    StructField("review_comment_title", StringType(), True),
                                    StructField("review_comment_message", StringType(), True),
                                    StructField("review_creation_date", TimestampType(), True),
-                                   StructField("review_answer_timestamp", TimestampType, True)
+                                   StructField("review_answer_timestamp", TimestampType(), True)
                                    ])
 
 order_reviews_df1 = spark.read.format("csv").option("header","true") \
                                             .schema(order_reviews_schema) \
-                                            .option("mode", "FAILFAST") \
+                                            .option("multiLine","true") \
+                                            .option("mode", "PERMISSIVE") \
                                             .load(order_reviews_file)
 
 order_reviews_df = add_timestamp(order_reviews_df1)
 
 print(f"Data Load into bronze table - {order_reviews_table} started at {datetime.now()}")
 
-order_reviews_df.write.format("delta").option("overwrite").saveAsTable("order_reviews_table")
+order_reviews_df.write.format("delta").mode("overwrite").saveAsTable(order_reviews_table)
 
 print(f"Data Load into bronze table - {order_reviews_table} completed at {datetime.now()}")
 
@@ -151,7 +154,7 @@ print (f"Completed Processing file - {order_reviews_file} completed at {datetime
 
 print (f"Started Processing file - {orders_file} started at {datetime.now()}")
 
-orders_schema = StructType([StructField("order_id", StringType(), FALSE),
+orders_schema = StructType([StructField("order_id", StringType(), False),
                             StructField("customer_id", StringType(), False),
                             StructField("order_status", StringType(), True),
                             StructField("order_purchase_timestamp", TimestampType(), True),
@@ -171,7 +174,7 @@ orders_df = add_timestamp(orders_df1)
 
 print(f"Data Load into bronze table - {orders_table} started at {datetime.now()}")
 
-orders_df.write.format("delta").option("overwrite").saveAsTable("orders_table")
+orders_df.write.format("delta").mode("overwrite").saveAsTable(orders_table)
 
 print(f"Data Load into bronze table - {orders_table} completed at {datetime.now()}")
 
@@ -189,7 +192,7 @@ products_schema = StructType([StructField("product_id", StringType(), True),
                               StructField("product_photos_qty", IntegerType(), True),
                               StructField("product_weight_g", IntegerType(), True),
                               StructField("product_length_cm", IntegerType(), True),
-                              StructField("product_height_cm", IntegerType, True),
+                              StructField("product_height_cm", IntegerType(), True),
                               StructField("product_width_cm", IntegerType(), True)
                               ])
 
@@ -197,13 +200,14 @@ products_schema = StructType([StructField("product_id", StringType(), True),
 products_df1 = spark.read.format("csv").option("header","true") \
                                        .schema(products_schema) \
                                        .option("mode","FAILFAST") \
-                                       .load("products_file")
+                                       .load(products_file)
 
 products_df = add_timestamp(products_df1)
 
+
 print(f"Data Load into bronze table - {products_table} started at {datetime.now()}")
 
-products_df.write.format("delta").option("overwrite").saveAsTable("products_table")
+products_df.write.format("delta").mode("overwrite").saveAsTable(products_table)
 
 print(f"Data Load into bronze table - {products_table} completed at {datetime.now()}")
 
@@ -224,14 +228,15 @@ sellers_schema = StructType([StructField("seller_id", StringType(), False),
 sellers_df1 = spark.read.format("csv").option("header","true") \
                                       .schema(sellers_schema) \
                                       .option("mode", "FAILFAST") \
-                                      .load("sellers_file")
+                                      .load(sellers_file)
 
 sellers_df = add_timestamp(sellers_df1)
 
 print(f"Data Load into bronze table - {sellers_table} started at {datetime.now()}")
 
-sellers_df.write.format("delta").option("overwrite").saveAsTable("sellers_table")
+sellers_df.write.format("delta").mode("overwrite").saveAsTable(sellers_table)
 
 print(f"Data Load into bronze table - {sellers_table} completed at {datetime.now()}")
 
 print (f"Started Processing file - {sellers_file} completed at {datetime.now()}")
+
