@@ -50,7 +50,7 @@ print(f"Data Load into bronze table - {customer_table} started at {datetime.now(
 
 customer_df.write.format("delta") \
                    .mode("overwrite") \
-                   .saveAsTable(customer_table)
+                   .saveAsTable(f"{catalog_name}.{bronze_schema}.{customer_table}")
 
 print(f"Data Load into bronze table - {customer_table} completed at {datetime.now()}")
 
@@ -79,7 +79,8 @@ geolocation_df = add_timestamp(geolocation_df1)
 
 print(f"Data Load into bronze table - {geolocation_table} started at {datetime.now()}")
 
-geolocation_df.write.format("delta").mode("overwrite").saveAsTable(geolocation_table)
+geolocation_df.write.format("delta").mode("overwrite") \
+                    .saveAsTable(f"{catalog_name}.{bronze_schema}.{geolocation_table}")
 
 print(f"Data Load into bronze table - {geolocation_table} completed at {datetime.now()}")
 
@@ -110,7 +111,8 @@ order_items_df = add_timestamp(order_items_df1)
 
 print(f"Data Load into bronze table - {order_items_table} started at {datetime.now()}")
 
-order_items_df.write.format("delta").mode("overwrite").saveAsTable(order_items_table)
+order_items_df.write.format("delta").mode("overwrite") \
+                    .saveAsTable(f"{catalog_name}.{bronze_schema}.{order_items_table}")
 
 print(f"Data Load into bronze table - {order_items_table} completed at {datetime.now()}")
 
@@ -142,7 +144,8 @@ order_reviews_df = add_timestamp(order_reviews_df1)
 
 print(f"Data Load into bronze table - {order_reviews_table} started at {datetime.now()}")
 
-order_reviews_df.write.format("delta").mode("overwrite").saveAsTable(order_reviews_table)
+order_reviews_df.write.format("delta").mode("overwrite") \
+                      .saveAsTable(f"{catalog_name}.{bronze_schema}.{order_reviews_table}")
 
 print(f"Data Load into bronze table - {order_reviews_table} completed at {datetime.now()}")
 
@@ -174,7 +177,8 @@ orders_df = add_timestamp(orders_df1)
 
 print(f"Data Load into bronze table - {orders_table} started at {datetime.now()}")
 
-orders_df.write.format("delta").mode("overwrite").saveAsTable(orders_table)
+orders_df.write.format("delta").mode("overwrite") \
+               .saveAsTable(f"{catalog_name}.{bronze_schema}.{orders_table}")
 
 print(f"Data Load into bronze table - {orders_table} completed at {datetime.now()}")
 
@@ -207,7 +211,8 @@ products_df = add_timestamp(products_df1)
 
 print(f"Data Load into bronze table - {products_table} started at {datetime.now()}")
 
-products_df.write.format("delta").mode("overwrite").saveAsTable(products_table)
+products_df.write.format("delta").mode("overwrite") \
+                 .saveAsTable(f"{catalog_name}.{bronze_schema}.{products_table}")
 
 print(f"Data Load into bronze table - {products_table} completed at {datetime.now()}")
 
@@ -234,7 +239,8 @@ sellers_df = add_timestamp(sellers_df1)
 
 print(f"Data Load into bronze table - {sellers_table} started at {datetime.now()}")
 
-sellers_df.write.format("delta").mode("overwrite").saveAsTable(sellers_table)
+sellers_df.write.format("delta").mode("overwrite") \
+                .saveAsTable(f"{catalog_name}.{bronze_schema}.{sellers_table}")
 
 print(f"Data Load into bronze table - {sellers_table} completed at {datetime.now()}")
 
