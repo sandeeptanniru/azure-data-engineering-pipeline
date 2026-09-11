@@ -1,8 +1,8 @@
 #### Variables used in the notebook are declared here
 
-file_path = '/Volumes/retail_catalog/raw/source_files'
+%run ../Setup/common_config.py
 
-files = dbutils.fs.ls(file_path)
+files = dbutils.fs.ls(landing_path)
 
 customer_file = next(
     (f.path for f in files
@@ -10,6 +10,7 @@ customer_file = next(
     ), 
     None
 )
+
 
 if customer_file:
     print("Expected customer file found:", customer_file)

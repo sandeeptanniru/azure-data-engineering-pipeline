@@ -13,14 +13,20 @@ from pyspark.sql.types import (
     TimestampType
 )
 
-#### Variables are declared below 
-customer_table = 'retail_catalog.bronze.olist_customers_dataset'
-geolocation_table = 'retail_catalog.bronze.olist_geolocation_dataset'
-order_items_table = 'retail_catalog.bronze.olist_order_items_dataset'
-order_reviews_table = 'retail_catalog.bronze.olist_order_reviews_dataset'
-orders_table = 'retail_catalog.bronze.olist_orders_dataset'
-products_table = 'retail_catalog.bronze.olist_products_dataset'
-sellers_table = 'retail_catalog.bronze.olist_sellers_dataset'
+%run ../Setup/common_config.py
+
+customer_file = f"{landing_path}/olist_customers_dataset.csv"
+geolocation_file = f"{landing_path}/olist_geolocation_dataset"
+order_items_file = f"{landing_path}/olist_order_items_dataset"
+order_reviews_file = f"{landing_path}/olist_order_reviews_dataset"
+orders_file = f"{landing_path}/olist_orders_dataset"
+products_file = f"{landing_path}/olist_products_dataset"
+sellers_file = f"{landing_path}/olist_sellers_dataset"
+
+def add_timestamp(df):
+    return(
+        df.withColumn("Insert_Timestamp", f.current_timestamp())
+    )
 
 print (f"Started Processing file - {customer_file} started at {datetime.now()}")
 customer_schema = StructType([StructField("customer_id", StringType(), False),
@@ -33,10 +39,9 @@ customer_schema = StructType([StructField("customer_id", StringType(), False),
 customer_df1 = spark.read.format("csv").option("header","true") \
                                              .schema(customer_schema) \
                                              .option("mode","FAILFAST") \
-                                             .load(customer_file)
+                                             .load(customer_file))
 
-customer_df = customer_df1.withColumn("Insert_Timestamp", f.current_timestamp())
-
+customer_df = add_timestamp(customer_df1)
 ##spark.sql("Truncate TABLE retail_catalog.raw.olist_customers_dataset")
 
 print(f"Data Load into bronze table - {customer_table} started at {datetime.now()}")
@@ -68,7 +73,7 @@ geolocation_df1 = spark.read.format("csv").option("header","true") \
                                           .option("mode","FAILFAST") \
                                           .load(geolocation_file)
 
-geolocation_df = geolocation_df1.withColumn("Insert_Timestamp", f.current_timestamp())
+geolocation_df = add_timestamp(geolocation_df1)
 
 print(f"Data Load into bronze table - {geolocation_table} started at {datetime.now()}")
 
@@ -99,7 +104,7 @@ order_items_df1 = spark.read.format("csv").option("header","true") \
                                           .option("mode", "FAILFAST") \
                                           .load(order_items_file)
 
-order_items_df = order_items_df1.withColumn("Insert_Timestamp", f.current_timestamp())
+order_items_df = add_timestamp(order_items_df1)
 
 print(f"Data Load into bronze table - {order_items_table} started at {datetime.now()}")
 
@@ -130,7 +135,7 @@ order_reviews_df1 = spark.read.format("csv").option("header","true") \
                                             .option("mode", "FAILFAST") \
                                             .load(order_reviews_file)
 
-order_reviews_df = order_reviews_df1.withColumn("Insert_Timestamp", f.current_timestamp())
+order_reviews_df = add_timestamp(order_reviews_df1)
 
 print(f"Data Load into bronze table - {order_reviews_table} started at {datetime.now()}")
 
@@ -162,7 +167,7 @@ orders_df1 = spark.read.format("csv").option("header","true") \
                                      .option("mode", "FAILFAST") \
                                      .load(orders_file)
 
-orders_df = orders_df1.withColumn("Insert_Timestamp", f.current_timestamp())
+orders_df = add_timestamp(orders_df1)
 
 print(f"Data Load into bronze table - {orders_table} started at {datetime.now()}")
 
@@ -194,7 +199,7 @@ products_df1 = spark.read.format("csv").option("header","true") \
                                        .option("mode","FAILFAST") \
                                        .load("products_file")
 
-products_df = products_df1.withColumn("Insert_Timestamp", f.current_timestamp())
+products_df = add_timestamp(products_df1)
 
 print(f"Data Load into bronze table - {products_table} started at {datetime.now()}")
 
@@ -221,7 +226,7 @@ sellers_df1 = spark.read.format("csv").option("header","true") \
                                       .option("mode", "FAILFAST") \
                                       .load("sellers_file")
 
-sellers_df = sellers_df1.withcolumn("Insert_Timestamp", f.current_timestamp())
+sellers_df = add_timestamp(sellers_df1)
 
 print(f"Data Load into bronze table - {sellers_table} started at {datetime.now()}")
 

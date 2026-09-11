@@ -1,6 +1,6 @@
 --External Location 
 
-CREAT EXTERNAL LOCATION IF NOT EXISTS '<external_location>'
-URL 'abfss://container@storage_account.dfs.core.windows.net/'
-WITH (STORAGE CREDENTIAL '<storage_credential>')
-COMMENT 'EXTERNAL LOCATION FOR demo project'
+CREATE EXTERNAL LOCATION IF NOT EXISTS `adb-xx-ext-location`
+URL 'abfss://retail@storage_account.dfs.core.windows.net/'
+WITH (STORAGE CREDENTIAL `az-xx-xxx-storage-credential`)
+COMMENT 'EXTERNAL LOCATION FOR az-databricks-container container'
