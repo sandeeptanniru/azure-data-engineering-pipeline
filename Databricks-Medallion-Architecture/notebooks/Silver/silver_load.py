@@ -28,6 +28,9 @@ customer_df = remove_duplicates(customer_df)
 
 customer_df.show()
 
+customer_df.write.format("delta").mode("overwrite") \
+                                 .saveAsTable(f"{catalog_name}.{silver_schema}.{customer_silver_table}")
+
 print(f"Data Load into silver table - {customer_silver_table} completed at {datetime.now()}")
 
 
@@ -48,6 +51,9 @@ geolocation_df = remove_duplicates(geolocation_df)
 
 geolocation_df.show()
 
+geolocation_df.write.format("delta").mode("overwrite") \
+                                    .saveAsTable(f"{catalog_name}.{silver_schema}.{geolocation_silver_table}")
+
 print(f"Data Load into silver table - {geolocation_silver_table} completed at {datetime.now()}")
 
 
@@ -62,6 +68,9 @@ order_items_df = order_items_df1.withColumnRenamed("freight_value", "shipping_co
 order_items_df = remove_duplicates(order_items_df)
 
 order_items_df.show()
+
+order_items_df.write.format("delta").mode("overwrite") \
+                                    .saveAsTable(f"{catalog_name}.{silver_schema}.{order_items_silver_table}")
 
 print(f"Data Load into silver table - {order_items_silver_table} completed at {datetime.now()}")
 
@@ -80,6 +89,9 @@ order_reviews_df = remove_duplicates(order_reviews_df)
 
 order_reviews_df.show()
 
+order_reviews_df.write.format("delta").mode("overwrite") \
+                                    .saveAsTable(f"{catalog_name}.{silver_schema}.{order_reviews_silver_table}")
+
 print(f"Data Load into silver table - {order_reviews_silver_table} completed at {datetime.now()}")
 
 
@@ -96,6 +108,9 @@ orders_df = orders_df2.withColumnRenamed("order_purchase_timestamp", "order_date
 orders_df = remove_duplicates(orders_df)
 
 orders_df.show()
+
+orders_df.write.format("delta").mode("overwrite") \
+                                    .saveAsTable(f"{catalog_name}.{silver_schema}.{orders_silver_table}")
 
 print(f"Data Load into silver table - {orders_silver_table} completed at {datetime.now()}")
 
@@ -116,6 +131,9 @@ products_df = remove_duplicates(products_df)
 
 products_df.show()
 
+products_df.write.format("delta").mode("overwrite") \
+                                    .saveAsTable(f"{catalog_name}.{silver_schema}.{products_silver_table}")
+
 print(f"Data Load into silver table - {products_silver_table} completed at {datetime.now()}")
 
 
@@ -128,6 +146,9 @@ sellers_df = sellers_df2.withColumnRenamed("seller_zip_code_prefix", "sellers_zi
 sellers_df = remove_duplicates(sellers_df)
 
 sellers_df.show()
+
+sellers_df.write.format("delta").mode("overwrite") \
+                                    .saveAsTable(f"{catalog_name}.{silver_schema}.{sellers_silver_table}")
 
 print(f"Data Load into silver table - {sellers_silver_table} completed at {datetime.now()}")
 
